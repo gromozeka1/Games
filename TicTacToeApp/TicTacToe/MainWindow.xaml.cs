@@ -165,7 +165,7 @@ namespace TicTacToe
             await Task.Delay(duration);
         }
 
-        private void OnMoveMade(Position position)
+        private void OnMoveMade(Location position)
         {
             Player player = gameState.GameGrid[position.X, position.Y];
             imageControls[position.X, position.Y].BeginAnimation(Image.SourceProperty, animations[player]);
@@ -206,14 +206,15 @@ namespace TicTacToe
 
         private void GameGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            gameState.MakeMove(GetPosition(e));
+        }
+
+        private Location GetPosition(MouseButtonEventArgs e)
+        {
             double squareSize = GameGrid.Width / 3;
             Point clickPosition = e.GetPosition(GameGrid);
-            Position position = new Position
-            {
-                X = (int)(clickPosition.Y / squareSize),
-                Y = (int)(clickPosition.X / squareSize),
-            };
-            gameState.MakeMove(position);
+            int coord = (int)(clickPosition.Y / squareSize);
+            return new Location(coord, coord);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

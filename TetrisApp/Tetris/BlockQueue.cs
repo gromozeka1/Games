@@ -17,14 +17,11 @@ namespace Tetris
         };
 
         private readonly Random random = new();
+        private Block RandomBlock() => blocks[random.Next(blocks.Length)];
 
         public Block NextBlock { get; private set; }
 
-        public BlockQueue()
-            => NextBlock = RandomBlock();
-
-        private Block RandomBlock()
-            => blocks[random.Next(blocks.Length)];
+        public BlockQueue() => NextBlock = RandomBlock();
 
         public Block GetAndUpdate()
         {

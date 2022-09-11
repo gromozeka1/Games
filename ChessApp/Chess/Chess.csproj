@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\bishopBlack.png" />
+    <None Remove="Assets\bishopWhite.png" />
+    <None Remove="Assets\kingBlack.png" />
+    <None Remove="Assets\kingWhite.png" />
+    <None Remove="Assets\knightBlack.png" />
+    <None Remove="Assets\knightWhite.png" />
+    <None Remove="Assets\pawnBlack.png" />
+    <None Remove="Assets\pawnWhite.png" />
+    <None Remove="Assets\queenBlack.png" />
+    <None Remove="Assets\queenWhite.png" />
+    <None Remove="Assets\rookBlack.png" />
+    <None Remove="Assets\rookWhite.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logic\IA\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\bishopBlack.png" />
+    <Resource Include="Assets\bishopWhite.png" />
+    <Resource Include="Assets\kingBlack.png" />
+    <Resource Include="Assets\kingWhite.png" />
+    <Resource Include="Assets\knightBlack.png" />
+    <Resource Include="Assets\knightWhite.png" />
+    <Resource Include="Assets\pawnBlack.png" />
+    <Resource Include="Assets\pawnWhite.png" />
+    <Resource Include="Assets\queenBlack.png" />
+    <Resource Include="Assets\queenWhite.png" />
+    <Resource Include="Assets\rookBlack.png" />
+    <Resource Include="Assets\rookWhite.png" />
+  </ItemGroup>
+
+</Project>

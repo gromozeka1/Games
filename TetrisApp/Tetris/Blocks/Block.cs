@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Tetris.Blocks
 {
@@ -12,23 +13,13 @@ namespace Tetris.Blocks
         private int rotationState;
         private readonly Position offset;
 
-        public Block()
-        {
-            offset = new Position(StartOffset.Row, StartOffset.Column);
-        }
+        public Block() => offset = new Position(StartOffset.Row, StartOffset.Column);
 
         public IEnumerable<Position> TilePositions()
-        {
-            foreach (var p in Tiles[rotationState])
-            {
-                yield return new Position(p.Row + offset.Row, p.Column + offset.Column);
-            }
-        }
+            => Tiles[rotationState].Select(p => new Position(p.Row + offset.Row, p.Column + offset.Column));
 
         public void RotateClockWise()
-        {
-            rotationState = (rotationState + 1) % Tiles.Length;
-        }
+            => rotationState = (rotationState + 1) % Tiles.Length;
 
         public void RotateCounterClockWise()
         {

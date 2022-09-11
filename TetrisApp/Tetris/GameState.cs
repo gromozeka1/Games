@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Tetris.Blocks;
 
@@ -10,10 +6,10 @@ namespace Tetris
 {
     public class GameState
     {
-        private Block currentBlock;
+        private Block? currentBlock;
         public Block CurrentBlock
         {
-            get => currentBlock;
+            get => currentBlock!;
             private set
             {
                 currentBlock = value;
@@ -71,59 +67,44 @@ namespace Tetris
                 return;
             }
 
-            if (HeldBlock is null)
-            {
-                HeldBlock = currentBlock;
-                CurrentBlock = BlockQueue.GetAndUpdate();
-            }
-            else
-            {
-                (CurrentBlock, HeldBlock) = (HeldBlock, CurrentBlock);
-            }
+            (CurrentBlock, HeldBlock) = HeldBlock is null
+                ? (BlockQueue.GetAndUpdate(), currentBlock)
+                : (HeldBlock, CurrentBlock);
 
             CanHold = false;
         }
 
         public void RotateBlockClockWise()
-        {
-            CurrentBlock.RotateClockWise();
-
-            if (!BlockFits())
-            {
-                CurrentBlock.RotateCounterClockWise();
-            }
-        }
+            => TryRotate(CurrentBlock.RotateClockWise,
+                        CurrentBlock.RotateCounterClockWise);
 
         public void RotateBlockCounterClockWise()
-        {
-            CurrentBlock.RotateCounterClockWise();
+            => TryRotate(CurrentBlock.RotateCounterClockWise,
+                        CurrentBlock.RotateClockWise);
 
+        private void TryRotate(Action rotate, Action undo)
+        {
+            rotate();
             if (!BlockFits())
             {
-                CurrentBlock.RotateClockWise();
+                undo();
             }
         }
 
-        public void MoveBlockLeft()
+        public void MoveBlockLeft() => TryMoveBlock(-1);
+
+        public void MoveBlockRight() => TryMoveBlock(1);
+
+        private void TryMoveBlock(int columns)
         {
-            CurrentBlock.Move(0, -1);
+            CurrentBlock.Move(0, columns);
             if (!BlockFits())
             {
-                CurrentBlock.Move(0, 1);
+                CurrentBlock.Move(0, -columns);
             }
         }
 
-        public void MoveBlockRight()
-        {
-            CurrentBlock.Move(0, 1);
-            if (!BlockFits())
-            {
-                CurrentBlock.Move(0, -1);
-            }
-        }
-
-        private bool IsGameOver()
-            => !(GameGrid.IsRowEmpty(0) && GameGrid.IsRowEmpty(1));
+        private bool IsGameOver() => !(GameGrid.IsRowEmpty(0) && GameGrid.IsRowEmpty(1));
 
         private void PlaceBlock()
         {

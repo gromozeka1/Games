@@ -1,91 +1,59 @@
 ﻿using System;
-using System.Linq;
+
+using TicTacToe.EndGameLogic;
 
 namespace TicTacToe
 {
+    /// <summary>
+    /// Provides functionality for game state.
+    /// </summary>
     public class GameState
     {
+        /// <summary>
+        /// Gets or sets the game grid.
+        /// </summary>
         public Player[,] GameGrid { get; private set; } = new Player[3, 3];
+        
+        /// <summary>
+        /// Gets or sets the current player.
+        /// </summary>
         public Player CurrentPlayer { get; private set; } = Player.X;
+        
+        /// <summary>
+        /// Gets or sets the number of passed turns.
+        /// </summary>
         public int TurnsPassed { get; private set; }
+        
+        /// <summary>
+        /// Gets or sets the game over status.
+        /// </summary>
         public bool GameOver { get; private set; }
 
-        public event Action<Position>? MoveMade;
+        public event Action<Location>? MoveMade;
         public event Action<GameResult?>? GameEnded;
         public event Action? GameRestarted;
 
-        public GameState()
-        {
-        }
-
-        private bool CanMakeMove(Position position)
+        private bool CanMakeMove(Location position)
             => !GameOver && GameGrid[position.X, position.Y] == Player.None;
-
-        private bool IsGridFull()
-            => TurnsPassed == 9;
 
         private void SwitchPlayer()
             => CurrentPlayer = CurrentPlayer == Player.X
                 ? Player.O
                 : Player.X;
 
-        private bool AreSquaresMarked((int r, int c)[] squares, Player player)
-            => !squares.Where(coord => GameGrid[coord.r, coord.c] != player).Any();
-
-        private bool IsMoveWin(Position position, out WinInfo? winInfo)
+        private bool IsMoveEndGame(Location position, out GameResult? gameResult)
         {
-            (int, int)[] row = new[] { (position.X, 0), (position.X, 1), (position.X, 2) };
-            (int, int)[] column = new[] { (0, position.Y), (1, position.Y), (2, position.Y) };
-            (int, int)[] mainDiagonal = new[] { (0, 0), (1, 1), (2, 2) };
-            (int, int)[] antiDiagonal = new[] { (0, 2), (1, 1), (2, 0) };
-
-            if (AreSquaresMarked(row, CurrentPlayer))
-            {
-                winInfo = new WinInfo { Type = WinType.Row, Number = position.X };
-                return true;
-            }
-
-            if (AreSquaresMarked(column, CurrentPlayer))
-            {
-                winInfo = new WinInfo { Type = WinType.Column, Number = position.Y };
-                return true;
-            }
-
-            if (AreSquaresMarked(mainDiagonal, CurrentPlayer))
-            {
-                winInfo = new WinInfo { Type = WinType.MainDiagonal };
-                return true;
-            }
-
-            if (AreSquaresMarked(antiDiagonal, CurrentPlayer))
-            {
-                winInfo = new WinInfo { Type = WinType.AntiDiagonal };
-                return true;
-            }
-
-            winInfo = null;
-            return false;
+            var endGameLogic = new EndGame(this);
+            bool condition = endGameLogic.IsGameEnd(position);
+            gameResult = condition ? endGameLogic.GameResult : null;
+            return condition;
         }
 
-        private bool DidMoveEndGame(Position position, out GameResult? gameResult)
-        {
-            if (IsMoveWin(position, out WinInfo? winInfo))
-            {
-                gameResult = new GameResult { Winner = CurrentPlayer, WinInfo = winInfo };
-                return true;
-            }
-
-            if (IsGridFull())
-            {
-                gameResult = new GameResult { Winner = Player.None };
-                return true;
-            }
-
-            gameResult = null;
-            return false;
-        }
-
-        public void MakeMove(Position position)
+        /// <summary>
+        /// Makes the move.
+        /// </summary>
+        /// <param name="position">Position.</param>
+        public void MakeMove(Location position)
         {
             if (!CanMakeMove(position))
             {
@@ -95,7 +63,7 @@ namespace TicTacToe
             GameGrid[position.X, position.Y] = CurrentPlayer;
             TurnsPassed++;
 
-            if (DidMoveEndGame(position, out GameResult? gameResult))
+            if (IsMoveEndGame(position, out GameResult? gameResult))
             {
                 GameOver = true;
                 MoveMade?.Invoke(position);
@@ -108,6 +76,9 @@ namespace TicTacToe
             }
         }
 
+        /// <summary>
+        /// Resets the game state to initial state.
+        /// </summary>
         public void Reset()
         {
             GameGrid = new Player[3, 3];
