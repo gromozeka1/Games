@@ -1,14 +1,13 @@
-﻿namespace Chess.Models.Pieces
-{
-    public enum FigureType
-    {
-        None,
+﻿namespace Chess.Models.Pieces;
 
-        Pawn,
-        King,
-        Queen,
-        Bishop,
-        Knight,
-        Rook,
-    }
+public enum FigureType
+{
+    None,
+
+    Pawn,
+    King,
+    Queen,
+    Bishop,
+    Knight,
+    Rook,
 }

@@ -2,58 +2,57 @@
 
 using Chess.Commands.Interfaces;
 
-namespace Chess.Commands
+namespace Chess.Commands;
+
+public class HistoryViewConversation : ICompensableConversation
 {
-    public class HistoryViewConversation : ICompensableConversation
+    private readonly Stack<ICompensableCommand> _redoCommands = new();
+    private readonly Stack<ICompensableCommand> _undoCommands = new();
+
+    /// <summary>
+    ///     Executes a command
+    /// </summary>
+    /// <param name="command">The command to execute</param>
+    public void Execute(ICompensableCommand command)
     {
-        private readonly Stack<ICompensableCommand> _redoCommands = new();
-        private readonly Stack<ICompensableCommand> _undoCommands = new();
+        command.Execute();
+        _undoCommands.Push(command);
+        _redoCommands.Clear();
+    }
 
-        /// <summary>
-        ///     Executes a command
-        /// </summary>
-        /// <param name="command">The command to execute</param>
-        public void Execute(ICompensableCommand command)
+    /// <summary>
+    ///     Undo the last command that has been done
+    /// </summary>
+    /// <returns>The last command, null if there is none</returns>
+    public ICompensableCommand? Undo()
+    {
+        if (_undoCommands.Count == 0)
         {
-            command.Execute();
-            _undoCommands.Push(command);
-            _redoCommands.Clear();
+            return null;
         }
 
-        /// <summary>
-        ///     Undo the last command that has been done
-        /// </summary>
-        /// <returns>The last command, null if there is none</returns>
-        public ICompensableCommand? Undo()
+        ICompensableCommand command = _undoCommands.Pop();
+        command.Compensate();
+        _redoCommands.Push(command);
+
+        return command;
+    }
+
+    /// <summary>
+    ///     Redo the last command that has been undone
+    /// </summary>
+    /// <returns>The last command, null if there is none</returns>
+    public ICompensableCommand? Redo()
+    {
+        if (_redoCommands.Count == 0)
         {
-            if (_undoCommands.Count == 0)
-            {
-                return null;
-            }
-
-            ICompensableCommand command = _undoCommands.Pop();
-            command.Compensate();
-            _redoCommands.Push(command);
-
-            return command;
+            return null;
         }
 
-        /// <summary>
-        ///     Redo the last command that has been undone
-        /// </summary>
-        /// <returns>The last command, null if there is none</returns>
-        public ICompensableCommand? Redo()
-        {
-            if (_redoCommands.Count == 0)
-            {
-                return null;
-            }
+        ICompensableCommand command = _redoCommands.Pop();
+        command.Execute();
+        _undoCommands.Push(command);
 
-            ICompensableCommand command = _redoCommands.Pop();
-            command.Execute();
-            _undoCommands.Push(command);
-
-            return command;
-        }
+        return command;
     }
 }

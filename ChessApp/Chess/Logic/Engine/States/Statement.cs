@@ -1,10 +1,9 @@
-﻿namespace Chess.Logic.Engine.States
+﻿namespace Chess.Logic.Engine.States;
+
+public enum Statement
 {
-    public enum Statement
-    {
-        Normal,
-        Check,
-        Checkmate,
-        Pat,
-    }
+    Normal,
+    Check,
+    Checkmate,
+    Pat,
 }

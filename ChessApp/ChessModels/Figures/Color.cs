@@ -1,8 +1,7 @@
-﻿namespace ChessModels.Figures
+﻿namespace ChessModels.Figures;
+
+public enum Color
 {
-    public enum Color
-    {
-        White,
-        Black,
-    }
+    White,
+    Black,
 }

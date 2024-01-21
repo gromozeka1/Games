@@ -1,24 +1,23 @@
-﻿namespace ChessModels.Figures
+﻿namespace ChessModels.Figures;
+
+/// <summary>
+/// Defines a king figure.
+/// </summary>
+public class King : BaseFigure
 {
     /// <summary>
-    /// Defines a king figure.
+    /// Initializes a new instance of the <see cref="King"/> class.
     /// </summary>
-    public class King : BaseFigure
+    /// <param name="color">Color of the figure.</param>
+    /// <param name="square">Square where the figure is in.</param>
+    public King(Color color, Square? square = null)
+        : base(color, square)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="King"/> class.
-        /// </summary>
-        /// <param name="color">Color of the figure.</param>
-        /// <param name="square">Square where the figure is in.</param>
-        public King(Color color, Square? square = null)
-            : base(color, square)
-        {
-            Type = Type.King;
-        }
-
-        /// <inheritdoc/>
-        public override BaseFigure Clone(Square square)
-            => new King(Color, square);
-
+        Type = Type.King;
     }
+
+    /// <inheritdoc/>
+    public override BaseFigure Clone(Square square)
+        => new King(Color, square);
+
 }

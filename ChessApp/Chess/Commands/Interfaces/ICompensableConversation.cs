@@ -1,9 +1,8 @@
-﻿namespace Chess.Commands.Interfaces
+﻿namespace Chess.Commands.Interfaces;
+
+public interface ICompensableConversation
 {
-    public interface ICompensableConversation
-    {
-        void Execute(ICompensableCommand command);
-        ICompensableCommand? Redo();
-        ICompensableCommand? Undo();
-    }
+    void Execute(ICompensableCommand command);
+    ICompensableCommand? Redo();
+    ICompensableCommand? Undo();
 }
